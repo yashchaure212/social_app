@@ -1,22 +1,17 @@
 import React from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
-import MainLayout from "./components/MainLayout";
-import Home from "./components/Home";
-import Profile from "./components/Profile";
-import Login from "./components/Login";
 import SignUp from "./components/SignUp";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Login from "./components/Login";
+import MainLayout from "./components/MainLayout";
+import Profile from "./components/Profile";
+import Home from "./components/Home";
 
 const App = () => {
-  const router = createBrowserRouter([
+  const browserRouter = createBrowserRouter([
     {
       path: "/",
       element: <MainLayout />,
       children: [
-        {
-          index: true, // default route
-          element: <Home />,
-        },
         {
           path: "home",
           element: <Home />,
@@ -28,16 +23,19 @@ const App = () => {
       ],
     },
     {
-      path: "/login",
-      element: <Login />,
-    },
-    {
-      path: "/signup",
+      path: "signup",
       element: <SignUp />,
     },
+    {
+      path: "login",
+      element: <Login />,
+    },
   ]);
-
-  return <RouterProvider router={router} />;
+  return (
+    <div>
+      <RouterProvider router={browserRouter} />
+    </div>
+  );
 };
 
 export default App;

@@ -145,10 +145,10 @@ export const logout = async (req, res) => {
             });
 
     } catch (error) {
-        console.log("Logout Error:", error);
+        console.error("Logout Error:", error);
 
         return res.status(500).json({
-            message: "Internal server error", error,
+            message: "Internal server error",
             success: false,
         });
     }

@@ -14,10 +14,3 @@ export const loginUser = async (data) => {
         { withCredentials: true }
     )
 };
-
-export const logoutUser = async () => {
-    return await axios.get(
-        "http://localhost:5000/api/auth/logout",
-        { withCredentials: true }
-    )
-};
