@@ -68,8 +68,8 @@ export const register = async (req, res) => {
         // set cookie
         res.cookie("token", token, {
             httpOnly: true,
-            secure: false, // true in production with https
-            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
@@ -132,9 +132,10 @@ export const login = async (req, res) => {
 
         const { password: _, ...userWithoutPass } = user._doc;
 
-        return res.cookie("token", token, {
+        res.cookie("token", token, {
             httpOnly: true,
-            sameSite: "strict",
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000,
         }).status(200).json({
             message: "Login successful",
