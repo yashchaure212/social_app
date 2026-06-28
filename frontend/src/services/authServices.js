@@ -1,23 +1,25 @@
-import axios from "axios"
+import api from "../lib/axios";
 
-export const signUpUser = async (data) => {
-    return await axios.post(
-        "http://localhost:5000/api/auth/register",
-        data,
-        { withCredentials: true })
+export const signupUser = async (data) => {
+    return api.post("/auth/register", data);
 };
 
 export const loginUser = async (data) => {
-    return await axios.post(
-        "http://localhost:5000/api/auth/login",
-        data,
-        { withCredentials: true }
-    )
+    return api.post("/auth/login", data);
 };
 
 export const logoutUser = async () => {
-    return await axios.get(
-        "http://localhost:5000/api/auth/logout",
-        { withCredentials: true }
-    )
+    return api.get("/auth/logout");
+};
+
+export const getMe = async () => {
+    return api.get("/auth/me");
+};
+
+export const EditProfile = async (data) => {
+    return api.put("/auth/me", data, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
 };

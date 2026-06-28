@@ -113,10 +113,6 @@ export const getAllPosts = async (req, res) => {
                 },
             });
 
-        posts.forEach((post) => {
-            console.log("Author ID:", post.author);
-        });
-
         // 🔹 3. Send success response
         return res.status(200).json({
             success: true,
@@ -126,6 +122,58 @@ export const getAllPosts = async (req, res) => {
 
     } catch (error) {
         console.error("Get Posts Error:", error);
+
+        return res.status(500).json({
+            message: "Internal server error",
+            success: false,
+        });
+    }
+};
+
+export const getSinglePost = async (req, res) => {
+    try {
+        const postId = req.params.id;
+
+        // validation
+        if (!postId) {
+            return res.status(400).json({
+                message: "Post id is required",
+                success: false,
+            });
+        }
+
+        // find post
+        const post = await Post.findById(postId)
+            .populate({
+                path: "author",
+                select: "username profilePicture"
+            })
+            .populate({
+                path: "comments",
+                options: { sort: { createdAt: -1 } },
+                populate: {
+                    path: "author",
+                    select: "username profilePicture"
+                }
+            });
+
+        // post not found
+        if (!post) {
+            return res.status(404).json({
+                message: "Post not found",
+                success: false,
+            });
+        }
+
+        // success response
+        return res.status(200).json({
+            message: "Post fetched successfully",
+            success: true,
+            post,
+        });
+
+    } catch (error) {
+        console.log(error.message);
 
         return res.status(500).json({
             message: "Internal server error",
@@ -170,65 +218,42 @@ export const getUserPost = async (req, res) => {
 export const likePost = async (req, res) => {
     try {
         const postId = req.params.id;
-        const authorId = req.id;
+        const userId = req.id;
 
-        // 🔹 Validate
-        if (!authorId) {
-            return res.status(401).json({
-                message: "Unauthorized user",
-                success: false,
-            });
-        }
-
-        if (!postId) {
-            return res.status(400).json({
-                message: "Invalid post ID",
-                success: false,
-            });
-        }
-
-        const post = await Post.findById(postId);
+        const post = await Post.findById(postId).populate(
+            "author",
+            "username profilePicture"
+        );
 
         if (!post) {
             return res.status(404).json({
-                message: "Post not found",
                 success: false,
+                message: "Post not found",
             });
         }
 
-        const alreadyLiked = post.likes.includes(authorId);
+        const alreadyLiked = post.likes.includes(userId);
 
-        if (!alreadyLiked) {
-            post.likes.push(authorId);
-
-            await post.save();
-
-            return res.status(200).json({
-                message: "Post liked",
-                success: true,
-                post,
-            });
-        } else {
+        if (alreadyLiked) {
             post.likes = post.likes.filter(
-                (id) => id.toString() !== authorId.toString()
+                (id) => id.toString() !== userId.toString()
             );
-
-            await post.save();
-
-            return res.status(200).json({
-                message: "Post unliked",
-                success: true,
-                post,
-            });
+        } else {
+            post.likes.push(userId);
         }
 
-    } catch (error) {
-        console.log(error.message);
+        await post.save();
 
-        res.status(500).json({
-            message: "internal server error",
-            success: false
-        })
+        return res.status(200).json({
+            success: true,
+            message: alreadyLiked ? "Post unliked" : "Post liked",
+            post,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
     }
 };
 
@@ -297,7 +322,7 @@ export const getCommentOfPost = async (req, res) => {
         const comments = await Comment.find({ post: postId }).populate({
             path: "author",
             select: "username profilePicture"
-        });
+        }).sort({ createdAt: -1 });
 
         res.status(200).json({
             message: comments.length
@@ -375,9 +400,9 @@ export const deletePost = async (req, res) => {
         const authorId = req.id;
         const postId = req.params.id;
 
-        if(!authorId || !postId) {
+        if (!authorId || !postId) {
             return res.status(400).json({
-                message:"invalid request",
+                message: "invalid request",
                 success: false,
             })
         };
@@ -390,9 +415,9 @@ export const deletePost = async (req, res) => {
             });
         }
 
-        if(authorId.toString() !== post.author.toString()){
+        if (authorId.toString() !== post.author.toString()) {
             return res.status(403).json({
-                message:"not authorize to delete this post",
+                message: "not authorize to delete this post",
                 success: false,
             })
         };
@@ -400,7 +425,7 @@ export const deletePost = async (req, res) => {
         await Comment.deleteMany({ post: postId });
 
         const user = await User.findById(authorId);
-         if (user) {
+        if (user) {
             user.posts = user.posts.filter(
                 (id) => id.toString() !== postId.toString()
             );

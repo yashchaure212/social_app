@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     },
     profilePicture: {
         type: String,
-        default: ""
+        default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_lvjjRAVDQ-nBDq_4dy1xCyRjjDaHV-Tqcw&s"
     },
     bio: {
         type: String,
@@ -44,8 +44,8 @@ const userSchema = new mongoose.Schema({
         ref: "Post",
     }],
 },
-{
-    timestamps: true
-});
+    {
+        timestamps: true
+    });
 
 export const User = mongoose.model("User", userSchema);
