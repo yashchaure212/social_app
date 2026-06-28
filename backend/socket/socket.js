@@ -4,11 +4,19 @@ let io;
 
 const userSocketMap = {};
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://social-app-yash41.vercel.app",
+  "https://social-d7rwu8lwq-yash41.vercel.app",
+];
+
+
 export const initSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: allowedOrigins,
       credentials: true,
+      methods: ["GET", "POST"],
     },
   });
 
