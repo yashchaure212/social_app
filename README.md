@@ -187,7 +187,7 @@ MongoDB Atlas used as the cloud database.
 Yash
 
 GitHub:
-[(Add GitHub Link)](https://github.com/yashchaure212)
+https://github.com/yashchaure212
 
 LinkedIn:
 https://www.linkedin.com/in/yashchaure212/
