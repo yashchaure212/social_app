@@ -72,19 +72,19 @@ backend/
 
 ### Login
 
-(Add Screenshot)
+![Login Page](screenshots/login.png)
 
 ### Home
 
-(Add Screenshot)
+![Home Page](screenshots/home.png)
 
 ### Chat
 
-(Add Screenshot)
+![Chat Page](screenshots/chat.png)
 
 ### Profile
 
-(Add Screenshot)
+![Profile Page](screenshots/profile.png)
 
 ---
 
